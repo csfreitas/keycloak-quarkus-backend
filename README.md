@@ -57,5 +57,133 @@ Para outros tipos de instalação olhar a documentação: https://www.keycloak.o
 
 ## API hello-app
 
+### Configuração da aplicação
+
+Extensão quarkus utilizada para OIDC:
+
+```xml
+<!-- OIDC extensions -->
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-oidc</artifactId>
+</dependency>
+```
+
+Extensão adicionada após criação do projeto quarkus com quarkus CLI:
+
+```shell
+quarkus create app com.redhat.demo:rest-api-keycloak:1.0
+```
+
+Para mais informações sobre a criação de projetos quarkus: https://quarkus.io/guides/getting-started
+
+Depois ajustamos a versão de propriedades para uma versão ***suportada pela Red Hat***, até a redação desta documentação:
+
+```xml
+<properties>
+  <!-- Omitted properties -->
+	<quarkus.platform.group-id>com.redhat.quarkus.platform</quarkus.platform.group-id>
+  <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+  <quarkus.platform.version>2.7.5.Final-redhat-00011</quarkus.platform.version>
+  <!-- <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id> -->
+  <!-- <quarkus.platform.version>2.10.1.Final</quarkus.platform.version> -->
+</properties>
+```
+
+Para mais informações sobre a versão suportada: https://access.redhat.com/documentation/en-us/red_hat_build_of_quarkus/2.7
+
+Configuração OIDC no *src/main/resource/* ***application.properties***
+
+```properties
+# OIDC Configuration
+quarkus.oidc.auth-server-url=http://localhost:8180/auth/realms/demo
+quarkus.oidc.client-id=hello-app
+quarkus.oidc.credentials.secret=9f7Ah9G3VEMMakeXG8sDNolJdp2wKWoD
+quarkus.oidc.tls.verification=none
+
+```
+
+Configuração dos ***resources***
+
+```java
+@Path("/hello")
+public class GreetingResource {
+
+    @Inject
+    SecurityIdentity securityIdentity;
+
+    @Inject
+    JsonWebToken jwt;
+
+    @GET
+    @PermitAll
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello() {
+        return "Hello from RESTEasy Reactive";
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/default")
+    @RolesAllowed({"DEFAULT_USER","ADMIN"})
+    public String helloDefaultUser() {
+        OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
+        String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());;
+        return "Olá, seu usuário é: " + username;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/admin")
+    @RolesAllowed("ADMIN")
+    public String helloAdminUser() {
+        OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
+        String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
+        return "Olá usuário: " + username + ", Somente ADMINISTRADORES podem utilizar este recurso)";
+    }
+
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/perfis")
+    @Authenticated
+    public String helloPerfisString() {
+        OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
+        JsonObject resource_access = (JsonObject) oidcPrincipal.claim("resource_access").get();
+        String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
+        return "Olá usuário: " + username+ ",você possui os seguintes perfis:' " +  resource_access.getJsonObject("hello-app").getJsonArray("roles");
+    }
+
+    private OidcJwtCallerPrincipal getOIDCPrincipal() {
+        Principal principal = securityIdentity.getPrincipal();
+        OidcJwtCallerPrincipal oidcPrincipal = null;
+        if(principal instanceof OidcJwtCallerPrincipal) {
+            oidcPrincipal = (OidcJwtCallerPrincipal) principal;
+        }
+        return oidcPrincipal;
+    }
+}
+```
+
+Em relação as configurações de autenticação e autorização:
+
+- Para permitir qualquer acesso a um *resource*, utililizar a *annotation* **@PermitAll**
+- Para permitir qualquer acesso autenticado de forma explícita, utilizar a *annotation* **@Authenticated**
+- Para fazer uso de RBAC nos acessos aos resources, utilizar a *annotation* **@RolesAllowed({})**, com a lista de perfis.
+
+### Token Claims E SecurityIdentity Roles
+
+SecurityIdentity roles podem ser mapeados pela verificação do access token JWT da seguinte forma:
+
+- Se a propriedade`quarkus.oidc.roles.role-claim-path` é definida e as claims de array ou string correspondentes são encontradas, então as funções são extraídas dessas claims.
+- Se a claim `groups `estiver disponível então seu valor é usado.
+- Se a claim`realm_access/roles` ou `resource_access/${client_id}/roles` (onde` ${client_id}` é o valor da propriedade `quarkus.oidc.client-id`) estiver disponível então seu valor é utilizado. Essas claims são é justamente as que o Keycloak emite em seus tokens.
+
+Além disso, um **SecurityIdentityAugmentor** personalizado também pode ser usado para adicionar as funções conforme documentado [aqui](https://quarkus.io/version/2.7/guides/security#security-identity-customization).
+
+### Execução da aplicação
+
+Para executar com maven embarcado:
+
 
 
