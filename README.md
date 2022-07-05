@@ -1,6 +1,8 @@
-# **Segurança de APIs com Keycloak**
+# **Segurança de APIs quarkus com Keycloak**
 
 
+
+## Objetivo
 
 Exemplo de aplicação backend/api desenvolvida em quarkus protegida e integrada com serviçod e autorização OIDC Keycloak.
 
@@ -10,7 +12,7 @@ No nosso exemplo teremos basicamente 3 atores: o **servidor de autorização**, 
 
 
 
-Basicamente teremos como exemplo os seguintes endpoints:
+Como exemplo serão os seguintes endpoints:
 
 - **/hello** - serviço de acesso público não autenticado 
 - **/hello/default** - serviço autorizado para usuário padrão e administrador
@@ -27,15 +29,33 @@ Iremos utilizar uma configuração padrão então para os usuários de perfis de
 | demo-default | 1234     | hello-app | DEFAULT_USER        |
 | demo-admin   | 1234     | hello-app | DEFAULT_USER, ADMIN |
 
+## Keycloak Authorization Server
 
+Para facilitar a execução e teste do exemplo estamos disponibilizando um pacote com banco de dados local(h2) já configurado com os usuários, *clients* e *roles* configuradas:
 
-Download do Keycloak
+- https://drive.google.com/file/d/18KuC-ROYIebjIiyf-uY0tF3c7UP8fQyS/view?usp=sharing
 
-https://drive.google.com/file/d/18KuC-ROYIebjIiyf-uY0tF3c7UP8fQyS/view?usp=sharing
+O keycloak pode ser baixado também no site: https://www.keycloak.org/downloads, com demais opções de execução para desenvolvimento.
 
+Deve ser realizado a configuração dos usuários, clients e roles conforme a tabela de usuários apresentada na seção anterior.
 
+Para subir o keycloak local:
 
+```shell
+cd $KEYCLOAK_HOME/bin
+sh standalone.sh 
+```
 
+Para executar em portas diferentes, no caso de um pacote ***wildfly***:
+
+```shell
+cd $KEYCLOAK_HOME/bin
+sh standalone.sh -Djboss.socket.binding.port-offset=100
+```
+
+Para outros tipos de instalação olhar a documentação: https://www.keycloak.org/guides
+
+## API hello-app
 
 
 
