@@ -213,7 +213,7 @@ Para testar o funcionamento das APIs estamos disponibilizando essa Collection do
 
 Depois que importar a collection para o postman, basta selecionar o resource que deseja testar e selecionar a aba ***authorization***:
 
-![Screen Shot 2022-07-06 at 15.14.18](assets/Screen-Shot 2022-07-06 at 15.14.18.png)
+![Screen Shot 2022-07-06 at 15.14.18](assets/Screen-Shot-2022-07-06 at 15.14.18.png)
 
 Selecionar o tipo de authorization para ***OAuth 2.0***, e preencher as informações, se necessário:
 
