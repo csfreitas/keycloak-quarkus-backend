@@ -4,9 +4,9 @@
 
 ## Objetivo
 
-Exemplo de aplicação backend/api desenvolvida em quarkus protegida e integrada com serviçod e autorização OIDC Keycloak.
+Exemplo de aplicação backend/api desenvolvida em quarkus protegida e integrada com serviço de autorização OIDC Keycloak.
 
-TODO DESENHO DESGIN
+![Exemplo API Keycloak](assets/Exemplo API Keycloak.png)
 
 No nosso exemplo teremos basicamente 3 atores: o **servidor de autorização**, responsável pela emissão de tokens JWTs e representado pelo keycloak, o postman que será utilizado para simular uma aplicação front-end e nossa API REST desenvolvida em quarkus e protegida pelo servidore de autorização.
 
@@ -213,13 +213,13 @@ Para testar o funcionamento das APIs estamos disponibilizando essa Collection do
 
 Depois que importar a collection para o postman, basta selecionar o resource que deseja testar e selecionar a aba ***authorization***:
 
-![image-20220706145003939](assets/image-20220706145003939.png)
+![Screen Shot 2022-07-06 at 15.14.18](assets/Screen Shot 2022-07-06 at 15.14.18.png)
 
 Selecionar o tipo de authorization para ***OAuth 2.0***, e preencher as informações, se necessário:
 
 **Grant Type**: Authorization Code
 
-**Auth URL: ** http://localhost:8180/auth/realms/demo/protocol/openid-connect/auth
+**Auth URL:** http://localhost:8180/auth/realms/demo/protocol/openid-connect/auth
 
 **Access Token URL:** http://localhost:8180/auth/realms/demo/protocol/openid-connect/token
 
@@ -230,6 +230,8 @@ Selecionar o tipo de authorization para ***OAuth 2.0***, e preencher as informa�
 **Scope:** openid
 
 > Alguns dos dados a cima podem mudar conforme a configuração da Realm a qual você estiver utilizando.
+
+
 
 Selecionar o botão `Get New Access Token` e iniciar o fluxo padrão de atenticação.
 
