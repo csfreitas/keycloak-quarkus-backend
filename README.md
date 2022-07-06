@@ -143,15 +143,29 @@ public class GreetingResource {
     }
 
 
-    @GET
+		@GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/perfis")
     @Authenticated
     public String helloPerfisString() {
         OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
-        JsonObject resource_access = (JsonObject) oidcPrincipal.claim("resource_access").get();
         String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
-        return "Olá usuário: " + username+ ",você possui os seguintes perfis:' " +  resource_access.getJsonObject("hello-app").getJsonArray("roles");
+        JsonObject resource_access = (JsonObject) oidcPrincipal.claim("resource_access").get();
+        Optional<JsonObject> ofNullableResourceAccess = Optional.ofNullable(resource_access); 
+        String perfis = null;
+        if(ofNullableResourceAccess.isPresent()) {
+            Optional<JsonObject> ofNullableHelloApp = Optional.ofNullable(ofNullableResourceAccess.get().getJsonObject("hello-app"));
+            if(ofNullableHelloApp.isPresent()) {
+                perfis += ofNullableHelloApp.get().getJsonArray("roles");
+            }
+        }
+        String response = null;
+        if(perfis != null){
+            response = "Olá usuário: " + username + ", você possui os seguintes perfis:' " +  perfis;
+        } else {
+            response = "Olá usuário: " + username + ", você não possui nenhum perfil configurado para aplicação: hello-app";
+        }
+        return response;
     }
 
     private OidcJwtCallerPrincipal getOIDCPrincipal() {
@@ -185,5 +199,60 @@ Além disso, um **SecurityIdentityAugmentor** personalizado também pode ser usa
 
 Para executar com maven embarcado:
 
+```shell
+./mvnw quarkus:dev
+```
+
+### Testes
+
+Para testar o funcionamento das APIs estamos disponibilizando essa Collection do Postman com as chamadas as resources configuradas para execução *localhost*.
+
+ [Quarkus Demo.postman_collection.json](./Quarkus Demo.postman_collection.json) 
+
+#### Obtendo token
+
+Depois que importar a collection para o postman, basta selecionar o resource que deseja testar e selecionar a aba ***authorization***:
+
+![image-20220706145003939](assets/image-20220706145003939.png)
+
+Selecionar o tipo de authorization para ***OAuth 2.0***, e preencher as informações, se necessário:
+
+**Grant Type**: Authorization Code
+
+**Auth URL: ** http://localhost:8180/auth/realms/demo/protocol/openid-connect/auth
+
+**Access Token URL:** http://localhost:8180/auth/realms/demo/protocol/openid-connect/token
+
+**Client-id:** postman
+
+**Secret:** 9eH0lCx00emeZoaOcuxRMPgEED55Ers9
+
+**Scope:** openid
+
+> Alguns dos dados a cima podem mudar conforme a configuração da Realm a qual você estiver utilizando.
+
+Selecionar o botão `Get New Access Token` e iniciar o fluxo padrão de atenticação.
+
+<img src="assets/image-20220706150227885.png" alt="login" width="800"/>
+
+Informar o usuário e senha:
+
+<img src="assets/image-20220706150502531.png" alt="login" width="800"/>
+
+Selecionar o botão `Use Token `após autenticação:
+
+![image-20220706150620983](assets/image-20220706150620983.png)
 
 
+
+Disparar uma chamada ao recurso desejado no botão `Send`:
+
+![image-20220706150730010](assets/image-20220706150730010.png)
+
+Observer o retorno do serviço:
+
+![image-20220706150821989](assets/image-20220706150821989.png)
+
+
+
+No nosso exemplo, o usuário ***demo*** não está autorizado a acessar o resource ***/hello/default***.
