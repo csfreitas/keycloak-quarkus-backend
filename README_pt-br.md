@@ -207,7 +207,7 @@ Para executar com maven embarcado:
 
 Para testar o funcionamento das APIs estamos disponibilizando essa Collection do Postman com as chamadas as resources configuradas para execução *localhost*.
 
- [Quarkus-Demo.postman_collection.json](./Quarkus Demo.postman_collection.json) 
+ [Quarkus Demo.postman_collection.json](./Quarkus-Demo.postman_collection.json) 
 
 #### Obtendo token
 
