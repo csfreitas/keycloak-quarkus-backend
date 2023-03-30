@@ -188,13 +188,13 @@ To run with embedded maven:
 
 To test the functioning of the APIs, we are making this Postman Collection available with calls to resources configured to run *localhost*.
 
- [Quarkus Demo.postman_collection.json](./Quarkus Demo.postman_collection.json) 
+ [Quarkus Demo.postman_collection.json](./Quarkus-Demo.postman_collection.json) 
 
 #### Getting the token
 
 After importing the collection to postman, just select the resource you want to test and select the ***authorization*** tab:
 
-![Screen Shot 2022-07-06 at 15.14.18](assets/Screen-Shot-2022-07-06 at 15.14.18.png)
+![Screen Shot 2022-07-06 at 15.14.18](assets/Screen-Shot-2022-07-06-at-15.14.18.png)
 
 Select the type of authorization for ***OAuth 2.0***, and fill in the information if necessary:
 
@@ -215,6 +215,7 @@ Select the type of authorization for ***OAuth 2.0***, and fill in the informatio
 
 
 Select the `Get New Access Token` button and start the standard authentication flow.
+
 
 <img src="assets/image-20220706150227885.png" alt="login" width="800"/>
 
