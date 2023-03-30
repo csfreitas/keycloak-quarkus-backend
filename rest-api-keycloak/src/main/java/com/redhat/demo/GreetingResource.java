@@ -38,7 +38,7 @@ public class GreetingResource {
     public String helloDefaultUser() {
         OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
         String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());;
-        return "Olá, seu usuário é: " + username;
+        return "Hello, Your user is the: " + username;
     }
 
     @GET
@@ -48,7 +48,7 @@ public class GreetingResource {
     public String helloAdminUser() {
         OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
         String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
-        return "Olá usuário: " + username + ", Somente ADMINISTRADORES podem utilizar este recurso)";
+        return "Hello user: " + username + ", Only administrators can use that resource";
     }
 
 
@@ -60,7 +60,7 @@ public class GreetingResource {
         OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
         JsonObject resource_access = (JsonObject) oidcPrincipal.claim("resource_access").get();
         String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
-        return "Olá usuário: " + username+ ",você possui os seguintes perfis:' " +  resource_access.getJsonObject("hello-app").getJsonArray("roles");
+        return "Hello User : " + username + ", you have the following profiles: " +  resource_access.getJsonObject("hello-app").getJsonArray("roles");
     }
 
     private OidcJwtCallerPrincipal getOIDCPrincipal() {

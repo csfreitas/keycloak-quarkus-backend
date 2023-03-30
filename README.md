@@ -1,27 +1,25 @@
-# **Segurança de APIs quarkus com Keycloak**
+# **Securing Quarkus APIs with Keycloak**
 
 
 
 ## Objetivo
 
-Exemplo de aplicação backend/api desenvolvida em quarkus protegida e integrada com serviço de autorização OIDC Keycloak.
+Example of backend/api application developed in quarkus protected and integrated with OIDC Keycloak authorization service.
 
 ![Exemplo API Keycloak](assets/Exemplo-API-Keycloak.png)
 
-No nosso exemplo teremos basicamente 3 atores: o **servidor de autorização**, responsável pela emissão de tokens JWTs e representado pelo keycloak, o postman que será utilizado para simular uma aplicação front-end e nossa API REST desenvolvida em quarkus e protegida pelo servidore de autorização.
+In our example we will basically have 3 actors: the **authorization server**, responsible for issuing JWT tokens and represented by the keycloak, the postman that will be used to simulate a front-end application and our REST API developed in quarkus and protected by authorization server.
 
 
+As an example are the following endpoints:
 
-Como exemplo serão os seguintes endpoints:
-
-- **/hello** - serviço de acesso público não autenticado 
-- **/hello/default** - serviço autorizado para usuário padrão e administrador
-- **/hello/admin** - serviço autorizado para usuário administrador
-- **/hello/perfis** - serviço autorizado para qualquer usuário autenticado
-
+- **/hello** - unauthenticated public access service
+- **/hello/default** - authorized service for standard user and administrator
+- **/hello/admin** - authorized service only for admin user
+- **/hello/profiles** - authorized service for any authenticated user
 
 
-Iremos utilizar uma configuração padrão então para os usuários de perfis de acesso baseado em *Roles*(RBAC  - Role Based Access Control), para autorizar os usuários a consumirem as APIs. Teremos então os seguintes usuários com seus repectivos perfis.
+We will use a default configuration for users with access profiles based on *Roles*(RBAC - Role Based Access Control), to authorize users to consume the APIs. We will then have the following users with their respective profiles:
 
 | USERNAME     | PASSWORD | CLIENT    | ROLES               |
 | ------------ | -------- | --------- | ------------------- |
@@ -31,35 +29,33 @@ Iremos utilizar uma configuração padrão então para os usuários de perfis de
 
 ## Keycloak Authorization Server
 
-Para facilitar a execução e teste do exemplo estamos disponibilizando um pacote com banco de dados local(h2) já configurado com os usuários, *clients* e *roles* configuradas:
+In an attempt to facilitate the execution and testing of the example, we are providing an export of the realm **demo-realm.json** to import the configured users, client and roles.
 
-- https://drive.google.com/file/d/18KuC-ROYIebjIiyf-uY0tF3c7UP8fQyS/view?usp=sharing
+The keycloak can also be downloaded from the website: [https://www.keycloak.org/downloads](https://www.keycloak.org/downloads), with other execution options for development.
 
-O keycloak pode ser baixado também no site: https://www.keycloak.org/downloads, com demais opções de execução para desenvolvimento.
+Users, clients and roles must be configured according to the users table presented in the previous section.
 
-Deve ser realizado a configuração dos usuários, clients e roles conforme a tabela de usuários apresentada na seção anterior.
-
-Para subir o keycloak local:
+To run or start the local keycloak (legacy wildfly package):
 
 ```shell
 cd $KEYCLOAK_HOME/bin
 sh standalone.sh 
 ```
 
-Para executar em portas diferentes, no caso de um pacote ***wildfly***:
+To run on different ports, in case of a ***wildfly*** package:
 
 ```shell
 cd $KEYCLOAK_HOME/bin
 sh standalone.sh -Djboss.socket.binding.port-offset=100
 ```
 
-Para outros tipos de instalação olhar a documentação: https://www.keycloak.org/guides
+For other types of installation see the documentation: [https://www.keycloak.org/guides](https://www.keycloak.org/guides)
 
 ## API hello-app
 
-### Configuração da aplicação
+### Application configuration
 
-Extensão quarkus utilizada para OIDC:
+Quarkus extension used for OIDC:
 
 ```xml
 <!-- OIDC extensions -->
@@ -69,41 +65,40 @@ Extensão quarkus utilizada para OIDC:
 </dependency>
 ```
 
-Extensão adicionada após criação do projeto quarkus com quarkus CLI:
+Extension added after creating quarkus project with quarkus CLI:
 
 ```shell
 quarkus create app com.redhat.demo:rest-api-keycloak:1.0
 ```
 
-Para mais informações sobre a criação de projetos quarkus: https://quarkus.io/guides/getting-started
+For more information on creating quarkus projects: [https://quarkus.io/guides/getting-started](https://www.keycloak.org/guides), for projects with community.
 
-Depois ajustamos a versão de propriedades para uma versão ***suportada pela Red Hat***, até a redação desta documentação:
+For those who have a Red Hat subscription which supports [Red Hat build of Quarkus](https://access.redhat.com/products/quarkus) it is recommended to use the supported  version by Red Hat. You can also create the project on usingthe page: [https://code.quarkus.redhat.com/](https://code.quarkus.redhat.com/) that already containing the supported version.
+
+Then we set the properties version to a version ***supported by Red Hat***, as of this writing:
 
 ```xml
 <properties>
   <!-- Omitted properties -->
 	<quarkus.platform.group-id>com.redhat.quarkus.platform</quarkus.platform.group-id>
   <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-  <quarkus.platform.version>2.7.5.Final-redhat-00011</quarkus.platform.version>
+  <quarkus.platform.version>2.13.7.Final-redhat-00003</quarkus.platform.version>
   <!-- <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id> -->
   <!-- <quarkus.platform.version>2.10.1.Final</quarkus.platform.version> -->
 </properties>
 ```
 
-Para mais informações sobre a versão suportada: https://access.redhat.com/documentation/en-us/red_hat_build_of_quarkus/2.7
-
-Configuração OIDC no *src/main/resource/* ***application.properties***
+OIDC configuration in *src/main/resource/* ***application.properties***
 
 ```properties
 # OIDC Configuration
-quarkus.oidc.auth-server-url=http://localhost:8180/auth/realms/demo
+quarkus.oidc.auth-server-url=http://localhost:8180/realms/demo
 quarkus.oidc.client-id=hello-app
-quarkus.oidc.credentials.secret=9f7Ah9G3VEMMakeXG8sDNolJdp2wKWoD
+quarkus.oidc.credentials.secret=mQoWzSJNIFbpxrRhwaqDmouy0Z3pQOAE
 quarkus.oidc.tls.verification=none
-
 ```
 
-Configuração dos ***resources***
+Configuration of the ***api resources***:
 
 ```java
 @Path("/hello")
@@ -129,7 +124,7 @@ public class GreetingResource {
     public String helloDefaultUser() {
         OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
         String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());;
-        return "Olá, seu usuário é: " + username;
+        return "Hello, Your user is the: " + username;
     }
 
     @GET
@@ -139,33 +134,19 @@ public class GreetingResource {
     public String helloAdminUser() {
         OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
         String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
-        return "Olá usuário: " + username + ", Somente ADMINISTRADORES podem utilizar este recurso)";
+        return "Hello user: " + username + ", Only administrators can use that resource";
     }
 
 
-		@GET
+    @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/perfis")
     @Authenticated
     public String helloPerfisString() {
         OidcJwtCallerPrincipal oidcPrincipal = getOIDCPrincipal();
-        String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
         JsonObject resource_access = (JsonObject) oidcPrincipal.claim("resource_access").get();
-        Optional<JsonObject> ofNullableResourceAccess = Optional.ofNullable(resource_access); 
-        String perfis = null;
-        if(ofNullableResourceAccess.isPresent()) {
-            Optional<JsonObject> ofNullableHelloApp = Optional.ofNullable(ofNullableResourceAccess.get().getJsonObject("hello-app"));
-            if(ofNullableHelloApp.isPresent()) {
-                perfis += ofNullableHelloApp.get().getJsonArray("roles");
-            }
-        }
-        String response = null;
-        if(perfis != null){
-            response = "Olá usuário: " + username + ", você possui os seguintes perfis:' " +  perfis;
-        } else {
-            response = "Olá usuário: " + username + ", você não possui nenhum perfil configurado para aplicação: hello-app";
-        }
-        return response;
+        String username = String.valueOf(oidcPrincipal.claim("preferred_username").orElseThrow());
+        return "Hello User : " + username + ", you have the following profiles: " +  resource_access.getJsonObject("hello-app").getJsonArray("roles");
     }
 
     private OidcJwtCallerPrincipal getOIDCPrincipal() {
@@ -179,82 +160,86 @@ public class GreetingResource {
 }
 ```
 
-Em relação as configurações de autenticação e autorização:
+Regarding authentication and authorization settings:
 
-- Para permitir qualquer acesso a um *resource*, utililizar a *annotation* **@PermitAll**
-- Para permitir qualquer acesso autenticado de forma explícita, utilizar a *annotation* **@Authenticated**
-- Para fazer uso de RBAC nos acessos aos resources, utilizar a *annotation* **@RolesAllowed({})**, com a lista de perfis.
+- To allow any access to a *resource*, use the *annotation* **@PermitAll**
+- To allow any explicitly authenticated access, use the *annotation* **@Authenticated**
+- To make use of RBAC when accessing resources, use the *annotation* **@RolesAllowed({})**, with the list of profiles.
 
-### Token Claims E SecurityIdentity Roles
+### Token Claims and SecurityIdentity Roles
 
-SecurityIdentity roles podem ser mapeados pela verificação do access token JWT da seguinte forma:
+SecurityIdentity roles can be mapped by checking the JWT access token as follows:
 
-- Se a propriedade`quarkus.oidc.roles.role-claim-path` é definida e as claims de array ou string correspondentes são encontradas, então as funções são extraídas dessas claims.
-- Se a claim `groups `estiver disponível então seu valor é usado.
-- Se a claim`realm_access/roles` ou `resource_access/${client_id}/roles` (onde` ${client_id}` é o valor da propriedade `quarkus.oidc.client-id`) estiver disponível então seu valor é utilizado. Essas claims são é justamente as que o Keycloak emite em seus tokens.
+- If the `quarkus.oidc.roles.role-claim-path` property is set and matching array or string claims are found, then roles are extracted from those claims.
+- If the `groups` claim is available then its value is used.
+- If claim`realm_access/roles` or `resource_access/${client_id}/roles` (where `${client_id}` is the value of property `quarkus.oidc.client-id`) is available then its value is used . These claims are exactly what Keycloak emits in its tokens.
 
-Além disso, um **SecurityIdentityAugmentor** personalizado também pode ser usado para adicionar as funções conforme documentado [aqui](https://quarkus.io/version/2.7/guides/security#security-identity-customization).
+Additionally, a custom **SecurityIdentityAugmentor** can also be used to add the functions as documented [here](https://quarkus.io/version/2.7/guides/security#security-identity-customization).
 
-### Execução da aplicação
+### Running the application
 
-Para executar com maven embarcado:
+To run with embedded maven:
 
 ```shell
 ./mvnw quarkus:dev
 ```
 
-### Testes
+### Tests
 
-Para testar o funcionamento das APIs estamos disponibilizando essa Collection do Postman com as chamadas as resources configuradas para execução *localhost*.
+To test the functioning of the APIs, we are making this Postman Collection available with calls to resources configured to run *localhost*.
 
  [Quarkus Demo.postman_collection.json](./Quarkus Demo.postman_collection.json) 
 
-#### Obtendo token
+#### Getting the token
 
-Depois que importar a collection para o postman, basta selecionar o resource que deseja testar e selecionar a aba ***authorization***:
+After importing the collection to postman, just select the resource you want to test and select the ***authorization*** tab:
 
 ![Screen Shot 2022-07-06 at 15.14.18](assets/Screen-Shot-2022-07-06 at 15.14.18.png)
 
-Selecionar o tipo de authorization para ***OAuth 2.0***, e preencher as informações, se necessário:
+Select the type of authorization for ***OAuth 2.0***, and fill in the information if necessary:
 
 **Grant Type**: Authorization Code
 
 **Auth URL:** http://localhost:8180/auth/realms/demo/protocol/openid-connect/auth
 
-**Access Token URL:** http://localhost:8180/auth/realms/demo/protocol/openid-connect/token
+**Access Token URL:** http://localhost:8180/realms/demo/protocol/openid-connect/token
 
 **Client-id:** postman
 
-**Secret:** 9eH0lCx00emeZoaOcuxRMPgEED55Ers9
+**Secret:** 88tkIw8ceZ1pLbtoh4UU9SMmTuNeXUPw
 
 **Scope:** openid
 
-> Alguns dos dados a cima podem mudar conforme a configuração da Realm a qual você estiver utilizando.
+> Some of the data above may change depending on the Realm configuration you are using.
 
 
 
-Selecionar o botão `Get New Access Token` e iniciar o fluxo padrão de atenticação.
+Select the `Get New Access Token` button and start the standard authentication flow.
 
 <img src="assets/image-20220706150227885.png" alt="login" width="800"/>
 
-Informar o usuário e senha:
+Enter username and password:
 
 <img src="assets/image-20220706150502531.png" alt="login" width="800"/>
 
-Selecionar o botão `Use Token `após autenticação:
+Selecting the `Use Token` button after authentication:
 
 ![image-20220706150620983](assets/image-20220706150620983.png)
 
 
-
-Disparar uma chamada ao recurso desejado no botão `Send`:
+Trigger a call to the desired resource on the `Send` button:
 
 ![image-20220706150730010](assets/image-20220706150730010.png)
 
-Observer o retorno do serviço:
+Observe the return of the service:
 
 ![image-20220706150821989](assets/image-20220706150821989.png)
 
 
 
-No nosso exemplo, o usuário ***demo*** não está autorizado a acessar o resource ***/hello/default***.
+In our example, the user ***demo*** is not authorized to access resource ***/hello/default***.
+
+
+#### Do it yourself
+
+You can now continue with the tests on the other endpoints. =)

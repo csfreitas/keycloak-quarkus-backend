@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ab6617cc-af72-45a6-9a59-1c19b300379e",
+		"_postman_id": "c60d2103-2011-4439-8298-47d26b2f9cb0",
 		"name": "Quarkus Demo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -31,23 +31,23 @@
 					"type": "oauth2",
 					"oauth2": [
 						{
-							"key": "scope",
-							"value": "openid",
-							"type": "string"
-						},
-						{
 							"key": "clientSecret",
-							"value": "PGRaiitKhMucoFQNtc4X05MeqTqXuoEM",
+							"value": "88tkIw8ceZ1pLbtoh4UU9SMmTuNeXUPw",
 							"type": "string"
 						},
 						{
 							"key": "accessTokenUrl",
-							"value": "http://localhost:8180/auth/realms/demo/protocol/openid-connect/token",
+							"value": "http://localhost:8180/realms/demo/protocol/openid-connect/token",
 							"type": "string"
 						},
 						{
 							"key": "authUrl",
-							"value": "http://localhost:8180/auth/realms/demo/protocol/openid-connect/auth",
+							"value": "http://localhost:8180/realms/demo/protocol/openid-connect/auth",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid",
 							"type": "string"
 						},
 						{
@@ -92,6 +92,51 @@
 		{
 			"name": "/hello/admin",
 			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "authUrl",
+							"value": "http://localhost:8180/realms/demo/protocol/openid-connect/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "88tkIw8ceZ1pLbtoh4UU9SMmTuNeXUPw",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "http://localhost:8180/realms/demo/protocol/openid-connect/token",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "demo-admin",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "postman",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -116,23 +161,23 @@
 					"type": "oauth2",
 					"oauth2": [
 						{
+							"key": "accessTokenUrl",
+							"value": "http://localhost:8180/realms/demo/protocol/openid-connect/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "http://localhost:8180/realms/demo/protocol/openid-connect/auth",
+							"type": "string"
+						},
+						{
 							"key": "clientSecret",
-							"value": "9eH0lCx00emeZoaOcuxRMPgEED55Ers9",
+							"value": "88tkIw8ceZ1pLbtoh4UU9SMmTuNeXUPw",
 							"type": "string"
 						},
 						{
 							"key": "scope",
 							"value": "openid",
-							"type": "string"
-						},
-						{
-							"key": "accessTokenUrl",
-							"value": "http://localhost:8180/auth/realms/demo/protocol/openid-connect/token",
-							"type": "string"
-						},
-						{
-							"key": "authUrl",
-							"value": "http://localhost:8180/auth/realms/demo/protocol/openid-connect/auth",
 							"type": "string"
 						},
 						{
